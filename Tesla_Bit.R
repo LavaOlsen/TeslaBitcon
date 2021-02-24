@@ -32,8 +32,6 @@ dplyr::glimpse(my_content_from_json)
 close_price_df <- my_content_from_json$`Time Series (Daily)`
 
 
-as.vector(as.Date(row.names(t(t(close_price_df)))))
-as.vector(row.names(t(t(close_price_df))))
 
 
 testets <- as.numeric(close_price_df[[1]][[1]])
@@ -102,8 +100,34 @@ my_content_from_json_bitcoin <- jsonlite::fromJSON(my_content_bitcoin)
 dplyr::glimpse(my_content_from_json_bitcoin)
 
 
+#configuring the dates
 
-###MERGING###
+#Tesla
+date_int <- as.vector(as.Date(row.names(t(t(close_price_df)))))
+timestamp <- as.vector(row.names(t(t(close_price_df))))
+timestamp_tesla <- as.data.frame(timestamp)
 
+
+#Bitcoin
+
+my_content_from_json_bitcoin$timestamp <- substr(my_content_from_json_bitcoin$timestamp, start=0, stop =10)
+str(my_content_from_json_bitcoin$timestamp)
+
+
+
+#MERGING
+
+#TESLA NR TIMESTAMP = 2682
+#BITCOIN NR TIMESTMAP 3452
+
+merged_dates <- merge(timestamp_tesla, my_content_from_json_bitcoin, by = "timestamp", all.x = TRUE)
+
+
+###
+
+#sorting
+
+
+cbind(timestamp_tesla, merged_dates$timestamp, timestamp==merged_dates$timestamp)
 
 
