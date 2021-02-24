@@ -120,14 +120,41 @@ str(my_content_from_json_bitcoin$timestamp)
 #TESLA NR TIMESTAMP = 2682
 #BITCOIN NR TIMESTMAP 3452
 
-merged_dates <- merge(timestamp_tesla, my_content_from_json_bitcoin, by = "timestamp", all.x = TRUE)
+merged_dates <- merge(timestamp_tesla,my_content_from_json_bitcoin, by = "timestamp", all.x = TRUE) #We generete som NAs
+
+##### TO DO - removing NAs-----
+
+  ### Must remove the nulls
 
 
-###
+
+
+#### Just a control of the two series' of time
 
 #sorting
 
+ID = c(1:2682)
+timestamp_tesla_asc <- as.data.frame(cbind(timestamp_tesla,ID))
+timestamp_tesla_asc <- timestamp_tesla_asc[order(-timestamp_tesla_asc$ID),]
+timestamp_tesla_asc <- timestamp_tesla_asc[1]
 
-cbind(timestamp_tesla, merged_dates$timestamp, timestamp==merged_dates$timestamp)
+
+timestamp_comparison <- cbind(timestamp_tesla_asc, merged_dates$timestamp, timestamp==merged_dates$timestamp)
 
 
+##### Dataframes
+# This is intended to contain the files for further analysis.
+
+
+  #TSLA in ascending dates
+  values.open <- as.vector(0)
+  values.close <- as.vector(0)
+  
+  for (i in 1:length(close_price_df)) {
+    values.open[i] <- as.numeric(close_price_df[[i]][[1]])
+    values.close[i] <- as.numeric(close_price_df[[i]][[5]]) #Adjusted close price
+  }
+
+df <- setNames(as.data.frame(cbind(timestamp_tesla,values.close,merged_dates$rate)),nm = c("Timestamp","TSLA","BTC"))
+
+## Note, we have a lot of NAs. There appear to be some days where information on the BTC price is missing. Hence we should deal with that
